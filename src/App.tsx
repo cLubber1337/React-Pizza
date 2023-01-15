@@ -26,6 +26,7 @@ const App = () => {
                                         price={m.price}
                                         imgUrl={m.imageUrl}
                                         sizes={m.sizes}
+                                        types={m.types}
                                     />
                             )
                         })}

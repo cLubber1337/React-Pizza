@@ -5,15 +5,17 @@ type PizzaType = {
     price: number
     imgUrl: string
     sizes: Array<number>
+    types: Array<number>
 }
 
-export const PizzaBlock: React.FC<PizzaType> = ({title, price, imgUrl, sizes}) => {
+export const PizzaBlock: React.FC<PizzaType> = ({
+                                                    title, price, imgUrl, sizes,
+                                                    types
+                                                }) => {
 
     const [indexSize, setIndexSize] = useState<number>(0)
-
-    const onClickChangeSize = (index: number) => {
-        setIndexSize(index)
-    }
+    const [indexType, setIndexType] = useState<number>(0)
+    const typeNames = ["традиционное", "тонкое"]
 
     return (
         <div className="pizza-block">
@@ -25,13 +27,17 @@ export const PizzaBlock: React.FC<PizzaType> = ({title, price, imgUrl, sizes}) =
             <h4 className="pizza-block__title">{title}</h4>
             <div className="pizza-block__selector">
                 <ul>
-                    <li className="active">тонкое</li>
-                    <li>традиционное</li>
+                    {types.map((type, index) => {
+                        return (
+                            <li onClick={() => setIndexType(index)}
+                                className={indexType === index ? "active" : ""}>{typeNames[type]}</li>
+                        )
+                    })}
                 </ul>
                 <ul>
                     {sizes.map((size, index) => {
                         return (
-                            <li onClick={() => onClickChangeSize(index)}
+                            <li onClick={() =>  setIndexSize(index)}
                                 className={indexSize === index ? "active" : ""}>{size} см.</li>
                         )
                     })}
