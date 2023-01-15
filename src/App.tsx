@@ -21,7 +21,12 @@ const App = () => {
                     <div className="content__items">
                         {pizzas.map(m => {
                             return (
-                                    <PizzaBlock title={m.title} price={m.price}/>
+                                    <PizzaBlock
+                                        title={m.title}
+                                        price={m.price}
+                                        imgUrl={m.imageUrl}
+                                        sizes={m.sizes}
+                                    />
                             )
                         })}
                     </div>

@@ -3,21 +3,23 @@ import React, {useState} from 'react';
 type PizzaType = {
     title: string
     price: number
+    imgUrl: string
+    sizes: Array<number>
 }
 
-export const PizzaBlock: React.FC<PizzaType> = ({title, price}) => {
+export const PizzaBlock: React.FC<PizzaType> = ({title, price, imgUrl, sizes}) => {
 
-    const [sum, setSum] = useState(0)
+    const [indexSize, setIndexSize] = useState<number>(0)
 
-    const onAddPizza = () => {
-      setSum(sum + 1)
+    const onClickChangeSize = (index: number) => {
+        setIndexSize(index)
     }
 
     return (
         <div className="pizza-block">
             <img
                 className="pizza-block__image"
-                src="https://dodopizza-a.akamaihd.net/static/Img/Products/Pizza/ru-RU/b750f576-4a83-48e6-a283-5a8efb68c35d.jpg"
+                src={imgUrl}
                 alt="Pizza"
             />
             <h4 className="pizza-block__title">{title}</h4>
@@ -27,14 +29,17 @@ export const PizzaBlock: React.FC<PizzaType> = ({title, price}) => {
                     <li>традиционное</li>
                 </ul>
                 <ul>
-                    <li className="active">26 см.</li>
-                    <li>30 см.</li>
-                    <li>40 см.</li>
+                    {sizes.map((size, index) => {
+                        return (
+                            <li onClick={() => onClickChangeSize(index)}
+                                className={indexSize === index ? "active" : ""}>{size} см.</li>
+                        )
+                    })}
                 </ul>
             </div>
             <div className="pizza-block__bottom">
                 <div className="pizza-block__price">от {price} ₽</div>
-                <button onClick={onAddPizza} className="button button--outline button--add">
+                <button className="button button--outline button--add">
                     <svg
                         width="12"
                         height="12"
@@ -47,8 +52,8 @@ export const PizzaBlock: React.FC<PizzaType> = ({title, price}) => {
                             fill="white"
                         />
                     </svg>
-                   <span>Добавить</span>
-                    <i>{sum}</i>
+                    <span>Добавить</span>
+                    <i>0</i>
                 </button>
             </div>
         </div>
