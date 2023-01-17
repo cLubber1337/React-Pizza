@@ -1,16 +1,20 @@
 import React, {useState} from 'react';
 
-type PizzaType = {
-    title: string
-    price: number
-    imgUrl: string
-    sizes: Array<number>
-    types: Array<number>
-}
+export type PizzaType =
+    {
+        id: number;
+        imageUrl: string;
+        title: string;
+        types: number[];
+        sizes: number[];
+        price: number;
+        category: number;
+        rating: number;
+    }
 
 export const PizzaBlock: React.FC<PizzaType> = ({
-                                                    title, price, imgUrl, sizes,
-                                                    types
+                                                    title, price, imageUrl, sizes,
+                                                    types, id
                                                 }) => {
 
     const [indexSize, setIndexSize] = useState<number>(0)
@@ -21,7 +25,7 @@ export const PizzaBlock: React.FC<PizzaType> = ({
         <div className="pizza-block">
             <img
                 className="pizza-block__image"
-                src={imgUrl}
+                src={imageUrl}
                 alt="Pizza"
             />
             <h4 className="pizza-block__title">{title}</h4>
@@ -29,7 +33,7 @@ export const PizzaBlock: React.FC<PizzaType> = ({
                 <ul>
                     {types.map((type, index) => {
                         return (
-                            <li onClick={() => setIndexType(index)}
+                            <li key={index} onClick={() => setIndexType(index)}
                                 className={indexType === index ? "active" : ""}>{typeNames[type]}</li>
                         )
                     })}
@@ -37,7 +41,7 @@ export const PizzaBlock: React.FC<PizzaType> = ({
                 <ul>
                     {sizes.map((size, index) => {
                         return (
-                            <li onClick={() =>  setIndexSize(index)}
+                            <li key={index} onClick={() => setIndexSize(index)}
                                 className={indexSize === index ? "active" : ""}>{size} см.</li>
                         )
                     })}

@@ -1,6 +1,15 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 export const Sort = () => {
+    const [indexSort, setIndexSort] = useState<number>(0)
+    const [open, setOpen] = useState(false)
+    const sortPizza = ["популярности", "цене", "алфавиту"]
+    let sortList = sortPizza[indexSort]
+
+    useEffect(() => {
+        setOpen(false)
+    }, [indexSort])
+
     return (
         <div className="sort">
             <div className="sort__label">
@@ -17,15 +26,17 @@ export const Sort = () => {
                     />
                 </svg>
                 <b>Сортировка по:</b>
-                <span>популярности</span>
+                <span onClick={() => setOpen(!open)}>{sortList}</span>
             </div>
-            <div className="sort__popup">
-                <ul>
-                    <li className="active">популярности</li>
-                    <li>цене</li>
-                    <li>алфавиту</li>
+            {open && <div className="sort__popup">
+                <ul> {sortPizza.map((m,i)=> {
+                    return (
+                        <li onClick={() => setIndexSort(i)} className={indexSort === i ? "active" : ""}>{m}</li>
+                    )
+                })}
                 </ul>
-            </div>
+            </div>}
+
         </div>
     );
 };
