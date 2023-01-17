@@ -1,16 +1,5 @@
 import React, {useState} from 'react';
-
-export type PizzaType =
-    {
-        id: number;
-        imageUrl: string;
-        title: string;
-        types: number[];
-        sizes: number[];
-        price: number;
-        category: number;
-        rating: number;
-    }
+import {PizzaType} from "../../App";
 
 export const PizzaBlock: React.FC<PizzaType> = ({
                                                     title, price, imageUrl, sizes,
