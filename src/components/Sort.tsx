@@ -1,14 +1,28 @@
 import React, {useEffect, useState} from 'react';
+import {SortingType} from "../pages/Home";
 
-export const Sort = () => {
-    const [indexSort, setIndexSort] = useState<number>(0)
+type SortPropsType = {
+    onClickSortType: (sorting: SortingType) => void
+    sortObj: SortingType
+}
+
+export const Sort: React.FC<SortPropsType> = ({sortObj, onClickSortType}) => {
+
     const [open, setOpen] = useState(false)
-    const sortPizza = ["популярности", "цене", "алфавиту"]
-    let sortList = sortPizza[indexSort]
+
+    const sortPizza: Array<SortingType> = [
+        {name: "популярности (DESC)", sortProperty: "rating"},
+        {name: "популярности (ASC)", sortProperty: "-rating"},
+        {name: "цене (DESC)", sortProperty: "price"},
+        {name: "цене (ASC)", sortProperty: "-price"},
+        {name: "алфавиту (DESC)", sortProperty: "title"},
+        {name: "алфавиту (ASC)", sortProperty: "-title"},
+    ]
+
 
     useEffect(() => {
         setOpen(false)
-    }, [indexSort])
+    }, [sortObj.name])
 
     return (
         <div className="sort">
@@ -26,12 +40,12 @@ export const Sort = () => {
                     />
                 </svg>
                 <b>Сортировка по:</b>
-                <span onClick={() => setOpen(!open)}>{sortList}</span>
+                <span onClick={() => setOpen(!open)}>{sortObj.name}</span>
             </div>
             {open && <div className="sort__popup">
-                <ul> {sortPizza.map((m,i)=> {
+                <ul> {sortPizza.map((m, i) => {
                     return (
-                        <li onClick={() => setIndexSort(i)} className={indexSort === i ? "active" : ""}>{m}</li>
+                        <li onClick={() => onClickSortType(m)} className={m.sortProperty === sortObj.sortProperty ? "active" : ""}>{m.name}</li>
                     )
                 })}
                 </ul>
