@@ -24,8 +24,7 @@ export const Home = () => {
     const order = sorting.sortProperty.includes("-") ? "acs" : "desc"
     const sortBy = sorting.sortProperty.replace("-", "")
 
-   //items?category=1&sortBy=price&order=acs
-
+    //items?category=1&sortBy=price&order=acs
     useEffect(() => {
         setLoading(true)
         fetch(`https://63c5d8f5f80fabd877f0fbbc.mockapi.io/items?${category}&sortBy=${sortBy}&order=${order}`)
@@ -34,16 +33,14 @@ export const Home = () => {
                 setItems(arr)
                 setLoading(false)
             })
-        window.scroll(0,0)
+        window.scroll(0, 0)
     }, [CategoryID, sorting])
-
 
     return (
         <div className="container">
             <div className="content__top">
-                <Categories onClickCategoriesID={(CategoryID)=>setCategoryID(CategoryID) } CategoryID={CategoryID}/>
-
-                <Sort onClickSortType={(sortObj)=>setSorting(sortObj) } sortObj={sorting}/>
+                <Categories onClickCategoriesID={(CategoryID) => setCategoryID(CategoryID)} CategoryID={CategoryID}/>
+                <Sort onClickSortType={(sortObj) => setSorting(sortObj)} sortObj={sorting}/>
             </div>
             <h2 className="content__title">Все пиццы</h2>
             <div className="content__items">
@@ -54,7 +51,6 @@ export const Home = () => {
                         return <PizzaBlock {...pizzaObj as PizzaType} key={pizzaObj.id}/>
                     })
                 }
-
             </div>
         </div>
     );
