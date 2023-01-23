@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {SortingType} from "../pages/Home";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../redux/store";
+import {setSort} from "../redux/slices/filterSlice";
 
-type SortPropsType = {
-    onClickSortType: (sorting: SortingType) => void
-    sortObj: SortingType
-}
 
-export const Sort: React.FC<SortPropsType> = ({sortObj, onClickSortType}) => {
+export const Sort: React.FC = () => {
+    const dispatch = useDispatch()
+    const sort = useSelector((state: RootState) => state.filter.sort)
 
     const [open, setOpen] = useState(false)
-
     const sortPizza: Array<SortingType> = [
         {name: "популярности (DESC)", sortProperty: "rating"},
         {name: "популярности (ASC)", sortProperty: "-rating"},
@@ -19,10 +19,16 @@ export const Sort: React.FC<SortPropsType> = ({sortObj, onClickSortType}) => {
         {name: "алфавиту (ASC)", sortProperty: "-title"},
     ]
 
+    const onClickSort = (obj: SortingType) => {
+        dispatch(setSort(obj))
+    }
+
+
+
 
     useEffect(() => {
         setOpen(false)
-    }, [sortObj.name])
+    }, [sort.name])
 
     return (
         <div className="sort">
@@ -40,12 +46,13 @@ export const Sort: React.FC<SortPropsType> = ({sortObj, onClickSortType}) => {
                     />
                 </svg>
                 <b>Сортировка по:</b>
-                <span onClick={() => setOpen(!open)}>{sortObj.name}</span>
+                <span onClick={() => setOpen(!open)}>{sort.name}</span>
             </div>
             {open && <div className="sort__popup">
                 <ul> {sortPizza.map((m, i) => {
                     return (
-                        <li onClick={() => onClickSortType(m)} className={m.sortProperty === sortObj.sortProperty ? "active" : ""}>{m.name}</li>
+                        <li onClick={() => onClickSort(m)}
+                            className={m.sortProperty === sort.sortProperty ? "active" : ""}>{m.name}</li>
                     )
                 })}
                 </ul>

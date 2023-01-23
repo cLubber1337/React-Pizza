@@ -1,8 +1,12 @@
 import React from 'react';
 import s from "./Search.module.scss"
-import {HeaderPropsType} from "../../App";
+import {SearchContext} from "../../App";
 
-export const Search: React.FC<HeaderPropsType> = ({setSearchInput, searchInput}) => {
+
+export const Search: React.FC = () => {
+
+    const {searchInput, setSearchInput} = React.useContext(SearchContext)
+
     return (
         <div className={s.root}>
             <svg viewBox="0 0 512 512" xmlSpace="preserve" xmlns="http://www.w3.org/2000/svg"

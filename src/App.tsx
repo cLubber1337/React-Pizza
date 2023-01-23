@@ -18,26 +18,29 @@ export type PizzaType =
         rating: number;
     }
 
-export type HeaderPropsType = {
+export type SearchInputType = {
     searchInput: string
-    setSearchInput: (searchInput: string)=> void
+    setSearchInput:  React.Dispatch<React.SetStateAction<string>>
 }
 
+export const SearchContext = React.createContext<SearchInputType>({} as SearchInputType)
 
 const App = () => {
 
     const [searchInput, setSearchInput] = React.useState("")
-
+    
     return (
         <div className="wrapper">
-            <Header searchInput={searchInput} setSearchInput={setSearchInput}/>
-            <div className="content">
+            <SearchContext.Provider value={{searchInput, setSearchInput}}>
+                <Header />
+                <div className="content">
                     <Routes>
                         <Route path={"/cart"} element={<Cart/>}/>
-                        <Route path={"/"} element={<Home searchInput={searchInput} />}/>
+                        <Route path={"/"} element={<Home />}/>
                         <Route path={"/*"} element={<NotFoundBlock/>}/>
                     </Routes>
                 </div>
+            </SearchContext.Provider>
         </div>
     );
 };

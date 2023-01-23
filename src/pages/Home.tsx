@@ -1,33 +1,39 @@
 import React, {useEffect, useState} from 'react';
-import {PizzaType} from "../App";
+import {PizzaType, SearchContext} from "../App";
 import {Categories} from "../components/Categories";
 import {Sort} from "../components/Sort";
 import {PizzaBlockSkeleton} from "../components/PizzaBlock/PizzaBlockSkeleton";
 import {PizzaBlock} from "../components/PizzaBlock/PizzaBlock";
 import {PaginationList} from "../components/Pagination/Pagination";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../redux/store";
+import {setCategoryId} from "../redux/slices/filterSlice";
 
 export type SortingType = {
     name: string
     sortProperty: string
 }
-type HomePropsType = {
-    searchInput: string
-}
 
-export const Home: React.FC<HomePropsType> = ({searchInput}) => {
+
+export const Home: React.FC = () => {
+    const dispatch = useDispatch()
+    const categoryId = useSelector((state: RootState) => state.filter.categoryId)
+    const onClickCategory = (i: number) => {
+        dispatch(setCategoryId(i))
+    }
+    const sorting = useSelector((state: RootState) => state.filter.sort.sortProperty)
+
+
+    const {searchInput} = React.useContext(SearchContext)
     const [items, setItems] = useState<PizzaType[]>([])
     const [isLoading, setLoading] = useState(true)
-    const [CategoryID, setCategoryID] = useState(0)
     const [currentPage, setCurrentPage] = useState(1)
-    const [sorting, setSorting] = useState<SortingType>({
-        name: "популярности",
-        sortProperty: "rating"
-    })
 
-    const category = CategoryID > 0 ? `category=${CategoryID}` : ""
-    const order = sorting.sortProperty.includes("-") ? "acs" : "desc"
-    const sortBy = sorting.sortProperty.replace("-", "")
-    const search =  searchInput ? `&search=${searchInput}` : ""
+
+    const category = categoryId > 0 ? `category=${categoryId}` : ""
+    const order = sorting.includes("-") ? "acs" : "desc"
+    const sortBy = sorting.replace("-", "")
+    const search = searchInput ? `&search=${searchInput}` : ""
 
     useEffect(() => {
         setLoading(true)
@@ -38,9 +44,9 @@ export const Home: React.FC<HomePropsType> = ({searchInput}) => {
                 setLoading(false)
             })
         window.scroll(0, 0)
-    }, [CategoryID, sorting, searchInput, currentPage])
+    }, [categoryId, sorting, searchInput, currentPage])
 
-    const pizzas= items.map(pizzaObj => {
+    const pizzas = items.map(pizzaObj => {
         return <PizzaBlock {...pizzaObj as PizzaType} key={pizzaObj.id}/>
     })
     const skeleton = [...new Array(9)].map((_, i) => {
@@ -50,14 +56,14 @@ export const Home: React.FC<HomePropsType> = ({searchInput}) => {
     return (
         <div className="container">
             <div className="content__top">
-                <Categories onClickCategoriesID={(CategoryID) => setCategoryID(CategoryID)} CategoryID={CategoryID}/>
-                <Sort onClickSortType={(sortObj) => setSorting(sortObj)} sortObj={sorting}/>
+                <Categories onClickCategoriesID={onClickCategory} CategoryID={categoryId}/>
+                <Sort />
             </div>
             <h2 className="content__title">Все пиццы</h2>
             <div className="content__items">
                 {isLoading ? skeleton : pizzas}
             </div>
-            <PaginationList currentPage={currentPage} onChangePage={number => setCurrentPage(number)} />
+            <PaginationList currentPage={currentPage} onChangePage={number => setCurrentPage(number)}/>
         </div>
     );
 };
