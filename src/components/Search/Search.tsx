@@ -1,11 +1,32 @@
-import React from 'react';
+import React, {useRef, ChangeEvent} from 'react';
 import s from "./Search.module.scss"
 import {SearchContext} from "../../App";
+import deleteIcon from "../../assets/img/deleteIcon.svg"
+import debounce from "lodash.debounce";
 
 
 export const Search: React.FC = () => {
+    const {setSearchInput} = React.useContext(SearchContext)
+    const [value, setValue] = React.useState("")
+    const inputRef = useRef<HTMLInputElement>(null)
+    const onClickClearInput = () => {
+        setValue("")
+        setSearchInput("")
+        if (inputRef.current !== null) {
+            inputRef.current.focus();
+        }
+    };
 
-    const {searchInput, setSearchInput} = React.useContext(SearchContext)
+    const updateSearchVale = React.useCallback(
+        debounce((str) => {
+            setSearchInput(str)
+        }, 1000),
+        []
+    )
+    const onChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
+        setValue(e.currentTarget.value)
+        updateSearchVale(e.currentTarget.value)
+    }
 
     return (
         <div className={s.root}>
@@ -15,7 +36,10 @@ export const Search: React.FC = () => {
                     d="M344.5 298c15-23.6 23.8-51.6 23.8-81.7 0-84.1-68.1-152.3-152.1-152.3C132.1 64 64 132.2 64 216.3c0 84.1 68.1 152.3 152.1 152.3 30.5 0 58.9-9 82.7-24.4l6.9-4.8L414.3 448l33.7-34.3-108.5-108.6 5-7.1zm-43.1-166.8c22.7 22.7 35.2 52.9 35.2 85s-12.5 62.3-35.2 85c-22.7 22.7-52.9 35.2-85 35.2s-62.3-12.5-85-35.2c-22.7-22.7-35.2-52.9-35.2-85s12.5-62.3 35.2-85c22.7-22.7 52.9-35.2 85-35.2s62.3 12.5 85 35.2z"
                     fill="#fe5f1e"></path>
             </svg>
-            <input value={searchInput} onChange={(e)=>setSearchInput(e.currentTarget.value)} className={s.input} placeholder={"Поиск пиццы..."}/>
+            <input value={value} ref={inputRef} onChange={onChangeInput} className={s.input}
+                   placeholder={"Поиск пиццы..."}/>
+            {value.length > 0 &&
+                <img className={s.iconDelete} onClick={onClickClearInput} src={deleteIcon} alt="deleteIcon"/>}
         </div>
     );
 };
