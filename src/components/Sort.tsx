@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {RefObject, useEffect, useRef, useState} from 'react';
 import {SortingType} from "../pages/Home";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../redux/store";
@@ -8,7 +8,6 @@ import {setSort} from "../redux/slices/filterSlice";
 export const Sort: React.FC = () => {
     const dispatch = useDispatch()
     const sort = useSelector((state: RootState) => state.filter.sort)
-
     const [open, setOpen] = useState(false)
     const sortPizza: Array<SortingType> = [
         {name: "популярности (DESC)", sortProperty: "rating"},
@@ -22,16 +21,25 @@ export const Sort: React.FC = () => {
     const onClickSort = (obj: SortingType) => {
         dispatch(setSort(obj))
     }
-
-
-
-
     useEffect(() => {
         setOpen(false)
     }, [sort.name])
 
+    const sortRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        const handleClickOutside = (event: any ) => {
+            let path = event.composedPath().includes(sortRef.current);
+            if (!path) setOpen(false);
+        };
+
+        document.body.addEventListener('click', handleClickOutside);
+
+        return () => document.body.removeEventListener('click', handleClickOutside);
+    }, []);
+
     return (
-        <div className="sort">
+        <div ref={sortRef} className="sort">
             <div className="sort__label">
                 <svg
                     width="10"

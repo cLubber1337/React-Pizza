@@ -16,6 +16,7 @@ export type PizzaType =
         price: number;
         category: number;
         rating: number;
+        count: number
     }
 
 export type SearchInputType = {

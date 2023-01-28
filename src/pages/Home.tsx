@@ -9,7 +9,6 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../redux/store";
 import {setCategoryId, setPageCount} from "../redux/slices/filterSlice";
 import axios from "axios";
-import qs from "qs"
 
 export type SortingType = {
     name: string
