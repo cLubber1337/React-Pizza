@@ -6,9 +6,9 @@ import {PizzaBlockSkeleton} from "../components/PizzaBlock/PizzaBlockSkeleton";
 import {PizzaBlock} from "../components/PizzaBlock/PizzaBlock";
 import {PaginationList} from "../components/Pagination/Pagination";
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../redux/store";
+import {AppDispatch, RootState} from "../redux/store";
 import {setCategoryId, setPageCount} from "../redux/slices/filterSlice";
-import axios from "axios";
+import {fetchPizzas} from "../redux/slices/pizzasSlice";
 
 export type SortingType = {
     name: string
@@ -17,10 +17,50 @@ export type SortingType = {
 
 
 export const Home: React.FC = () => {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch<AppDispatch>()
     const categoryId = useSelector((state: RootState) => state.filter.categoryId)
     const sorting = useSelector((state: RootState) => state.filter.sort.sortProperty)
     const pageCount = useSelector((state: RootState) => state.filter.pageCount)
+
+    const items = useSelector((state: RootState) => state.pizzas.items)
+
+    const {searchInput} = React.useContext(SearchContext)
+
+    const [isLoading, setLoading] = useState(true)
+
+
+
+    const getPizzas = async () => {
+        setLoading(true)
+
+        const category = categoryId > 0 ? `category=${categoryId}` : ""
+        const order = sorting.includes("-") ? "acs" : "desc"
+        const sortBy = sorting.replace("-", "")
+        const search = searchInput ? `&search=${searchInput}` : ""
+
+        try {
+            dispatch(fetchPizzas({
+                category,
+                order,
+                sortBy,
+                search,
+                pageCount
+            }))
+        } catch (e) {
+            console.log("ERROR", e)
+        } finally {
+            setLoading(false)
+        }
+
+
+        window.scroll(0, 0)
+    }
+
+    useEffect(() => {
+        getPizzas()
+    }, [categoryId, sorting, searchInput, pageCount])
+
+
     const onClickCategory = (i: number) => {
         dispatch(setCategoryId(i))
     }
@@ -28,29 +68,6 @@ export const Home: React.FC = () => {
     const onChangePage = (number: number) => {
         dispatch(setPageCount(number))
     }
-
-
-    const {searchInput} = React.useContext(SearchContext)
-
-    const [items, setItems] = useState<PizzaType[]>([])
-    const [isLoading, setLoading] = useState(true)
-
-
-    const category = categoryId > 0 ? `category=${categoryId}` : ""
-    const order = sorting.includes("-") ? "acs" : "desc"
-    const sortBy = sorting.replace("-", "")
-    const search = searchInput ? `&search=${searchInput}` : ""
-    
-    
-
-    useEffect(() => {
-        axios.get(`https://63c5d8f5f80fabd877f0fbbc.mockapi.io/items?page=${pageCount}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`)
-            .then(r => {
-                setItems(r.data)
-                setLoading(false)
-            })
-        window.scroll(0, 0)
-    }, [categoryId, sorting, searchInput, pageCount])
 
     const pizzas = items.map(pizzaObj => {
         return <PizzaBlock {...pizzaObj as PizzaType} key={pizzaObj.id}/>
