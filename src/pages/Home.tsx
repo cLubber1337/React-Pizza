@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {PizzaType, SearchContext} from "../App";
 import {Categories} from "../components/Categories";
 import {Sort} from "../components/Sort";
@@ -18,46 +18,29 @@ export type SortingType = {
 
 export const Home: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>()
-    const categoryId = useSelector((state: RootState) => state.filter.categoryId)
+    const {categoryId, pageCount} = useSelector((state: RootState) => state.filter)
     const sorting = useSelector((state: RootState) => state.filter.sort.sortProperty)
-    const pageCount = useSelector((state: RootState) => state.filter.pageCount)
-
-    const items = useSelector((state: RootState) => state.pizzas.items)
-
+    const {items, status} = useSelector((state: RootState) => state.pizzas)
     const {searchInput} = React.useContext(SearchContext)
 
-    const [isLoading, setLoading] = useState(true)
-
-
-
     const getPizzas = async () => {
-        setLoading(true)
-
         const category = categoryId > 0 ? `category=${categoryId}` : ""
         const order = sorting.includes("-") ? "acs" : "desc"
         const sortBy = sorting.replace("-", "")
         const search = searchInput ? `&search=${searchInput}` : ""
 
-        try {
-            dispatch(fetchPizzas({
-                category,
-                order,
-                sortBy,
-                search,
-                pageCount
-            }))
-        } catch (e) {
-            console.log("ERROR", e)
-        } finally {
-            setLoading(false)
-        }
-
-
-        window.scroll(0, 0)
+        dispatch(fetchPizzas({
+            category,
+            order,
+            sortBy,
+            search,
+            pageCount
+        }))
     }
 
     useEffect(() => {
         getPizzas()
+        window.scroll(0, 0)
     }, [categoryId, sorting, searchInput, pageCount])
 
 
@@ -84,7 +67,7 @@ export const Home: React.FC = () => {
             </div>
             <h2 className="content__title">Все пиццы</h2>
             <div className="content__items">
-                {isLoading ? skeleton : pizzas}
+                { status === "loading" ? skeleton : pizzas}
             </div>
 
             <PaginationList currentPage={pageCount} onChangePage={onChangePage}/>
